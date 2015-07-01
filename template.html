@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta charset="UTF-8">
+    <title>drshit.ch</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/bootstrap.min.css"/>
+    <link rel="icon" href="favicon.jpg"/>
+    <link rel="apple-touch-icon" href="favicon.jpg">
+</head>
+<body>
+<div class="container">
+    <div class="">
+        <h2 class="text-center">Add a subdomain redirect.</h2>
+        <form class="form-horizontal col-md-12 subdomain" action="/add" method="POST">
+            <fieldset>
+                <!-- Appended Input-->
+                <div class="form-group">
+                    <label class="col-md-4 control-label" for="subdomain">Subdomain</label>
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <input id="subdomain" name="subdomain" class="form-control" placeholder="hello" type="text">
+                            <span class="input-group-addon">.drshit.ch</span>
+                        </div>
+                        <p class="help-block">Subdomain which redirects to your link.</p>
+                    </div>
+                </div>
+                <!-- Text input-->
+                <div class="form-group">
+                    <label class="col-md-4 control-label" for="url">Redirect url</label>
+                    <div class="col-md-4">
+                        <input id="url" name="url" type="text" placeholder="http://example.com" class="form-control input-md">
+                        <span class="help-block">Link to redirect to (With or without http://).</span>
+                    </div>
+                </div>
+
+                <!-- Button -->
+                <div class="form-group">
+                    <label class="col-md-4 control-label"></label>
+                    <div class="col-md-4">
+                        <button name="singlebutton" class="btn btn-primary btn-large btn-block">Submit</button>
+                    </div>
+                </div>
+
+            </fieldset>
+        </form>
+
+        <div class="clearfix col-md-4 col-md-offset-4">
+        <div class="alert alert-success subdomain-success" style="display: none;" role="alert"></div>
+        <div class="alert alert-danger subdomain-error" style="display: none;" role="alert"></div>
+        </div>
+        <div class="text-center clearfix col-md-12">
+            <br />
+            <a href="/fresh">Freshest of drshit.ch</a>
+        </div>
+        <div class="text-center clearfix col-md-12">
+            <br />
+            <a href="/best">Best of drshit.ch</a>
+        </div>
+    </div>
+</div>
+<script src="js/vendor/jquery-1.11.2.min.js"></script>
+<script src="js/vendor/bootstrap.min.js"></script>
+<script src="js/main.js"></script>

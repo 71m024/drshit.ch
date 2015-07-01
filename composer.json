@@ -1,0 +1,12 @@
+{
+    "name": "nahakiole/drshit",
+    "require": {
+        "silex/silex": "^1.2"
+    },
+    "authors": [
+        {
+            "name": "Nahakiole",
+            "email": "robin.glauser@gmail.com"
+        }
+    ]
+}
