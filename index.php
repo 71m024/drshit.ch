@@ -94,33 +94,6 @@ $app->get('/fresh', function () use ($app, $database) {
     return str_replace('{{fresh}}', $output, file_get_contents('fresh.html'));
 });
 
-$app->get('/', function () use ($app, $database) {
-    $url = parse_url($app['request']->server->get('HTTP_HOST'));
-    if (isset($url['host']) || isset($url['path'])) {
-        $host = isset($url['host']) ? $url['host'] : $url['path'];
-        preg_match('/(?P<subdomain>[a-z0-9\.]+)\.drshit.(dev|local|ch)/', $host, $matches);
-        if (isset($matches['subdomain'])) {
-            $subdomain = $matches['subdomain'];
-            if ($subdomain == 'www' || preg_match('/drshit/i', $subdomain)) {
-                return file_get_contents('template.html');
-            }
-            $statement = $database->prepare("select url from redirects where subdomain = :subdomain");
-            $statement->execute(array(':subdomain' => $subdomain));
-            $row = $statement->fetch();
-            if (!isset($row['url'])) {
-                return new \Symfony\Component\HttpFoundation\RedirectResponse('http://wikipedia.org/wiki/' . $subdomain);
-            }
-            $statement = $database->prepare(" UPDATE redirects SET views = views + 1 where subdomain = :subdomain");
-            $statement->execute(array(':subdomain' => $subdomain));
-            $statement = $database->prepare(" UPDATE redirects SET lastredirect = :currentdatetime where subdomain = :subdomain");
-            $statement->execute(array(':subdomain' => $subdomain, ':currentdatetime' => date('c')));
-
-            return new \Symfony\Component\HttpFoundation\RedirectResponse($row['url']);
-        }
-    }
-    return file_get_contents('template.html');
-});
-
 $app->post('/add', function () use ($app, $database) {
     try {
         $subdomain = strtolower($app['request']->get('subdomain'));
@@ -167,6 +140,34 @@ $app->post('/add', function () use ($app, $database) {
     }
 
 });
+
+$app->get('/{url}', function () use ($app, $database) {
+    $url = parse_url($app['request']->server->get('HTTP_HOST'));
+    if (isset($url['host']) || isset($url['path'])) {
+        $host = isset($url['host']) ? $url['host'] : $url['path'];
+        preg_match('/(?P<subdomain>[a-z0-9\.]+)\.drshit.(dev|local|ch)/', $host, $matches);
+        if (isset($matches['subdomain'])) {
+            $subdomain = $matches['subdomain'];
+            if ($subdomain == 'www' || preg_match('/drshit/i', $subdomain)) {
+                return file_get_contents('template.html');
+            }
+            $statement = $database->prepare("select url from redirects where subdomain = :subdomain");
+            $statement->execute(array(':subdomain' => $subdomain));
+            $row = $statement->fetch();
+            if (!isset($row['url'])) {
+                return new \Symfony\Component\HttpFoundation\RedirectResponse('http://wikipedia.org/wiki/' . $subdomain);
+            }
+            $statement = $database->prepare(" UPDATE redirects SET views = views + 1 where subdomain = :subdomain");
+            $statement->execute(array(':subdomain' => $subdomain));
+            $statement = $database->prepare(" UPDATE redirects SET lastredirect = :currentdatetime where subdomain = :subdomain");
+            $statement->execute(array(':subdomain' => $subdomain, ':currentdatetime' => date('c')));
+
+            return new \Symfony\Component\HttpFoundation\RedirectResponse($row['url']);
+        }
+    }
+    $givenUrl = strtolower($app['request']->get('url'));
+    return str_replace("{{url}}", $givenUrl, file_get_contents('template.html'));
+})->value('url', '')->assert("url", ".*");
 
 function insertSubdomain($database, $subdomain, $url)
 {
