@@ -95,7 +95,10 @@ $app->get('/fresh', function () use ($app, $database) {
 });
 
 $app->get('/push', function () {
-    return file_get_contents("push");
+    shell_exec( 'chmod +x push' );
+    shell_exec( './push' );
+    shell_exec( 'chmod +x push' );
+    return 'It works!';
 });
 
 $app->post('/add', function () use ($app, $database) {
