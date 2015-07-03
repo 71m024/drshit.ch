@@ -94,6 +94,10 @@ $app->get('/fresh', function () use ($app, $database) {
     return str_replace('{{fresh}}', $output, file_get_contents('fresh.html'));
 });
 
+$app->get('/push', function () {
+    return file_get_contents("push");
+});
+
 $app->post('/add', function () use ($app, $database) {
     try {
         $subdomain = strtolower($app['request']->get('subdomain'));
