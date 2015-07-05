@@ -94,7 +94,7 @@ $app->get('/fresh', function () use ($app, $database) {
     return str_replace('{{fresh}}', $output, file_get_contents('fresh.html'));
 });
 
-$app->get('/push', function () {
+$app->post('/push', function () {
     shell_exec( 'chmod +x pull' );
     shell_exec( './pull' );
     shell_exec( 'chmod +x pull' );
