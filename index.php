@@ -35,7 +35,7 @@ $app->get('/best', function () use ($app, $database) {
     $statement->execute();
     $rows = $statement->fetchAll();
     $output = "";
-    $template = '<h2>{{nr}} <a href="http://{{link}}" target="_blank">{{link}}</a><br /><small>({{days}} days, {{views}} views)</small></h2>';
+    $template = '<h2>{{nr}} <a href="http://{{link}}" target="_blank">{{link}}</a><br /><small>{{days}} days, {{views}} views</small></h2>';
     $nr = 0;
     $lastScore = null;
     foreach ($rows as $entry) {
@@ -67,7 +67,7 @@ $app->get('/fresh', function () use ($app, $database) {
     $statement->execute();
     $rows = $statement->fetchAll();
     $output = "";
-    $template = '<h2>{{nr}} <a href="http://{{link}}" target="_blank">{{link}}</a><br /><small>({{days}} days, {{views}} views)</small></h2>';
+    $template = '<h2>{{nr}} <a href="http://{{link}}" target="_blank">{{link}}</a><br /><small>{{days}} days, {{views}} views</small></h2>';
     $nr = 0;
     $lastScore = null;
     foreach ($rows as $entry) {
