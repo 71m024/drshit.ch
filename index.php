@@ -39,29 +39,20 @@ $app->get('/best', function () use ($app, $database) {
     $statement->execute();
     $rows = $statement->fetchAll();
     $output = "";
-    $template = '<h2>{{nr}} <a href="http://{{link}}" target="_blank">{{link}}</a><br /><small>{{days}} days, {{views}} views</small></h2>';
-    $nr = 0;
-    $lastScore = null;
+    $template = '<h2><a href="http://{{subdomain}}.drshit.ch" target="_blank">{{subdomain}}</a><br /><small>{{days}} days, {{views}} views</small></h2>';
     foreach ($rows as $entry) {
-        if ($lastScore !== $entry['views']) {
-            $nr++;
-        }
         $output .= str_replace(
             array(
                 '{{views}}',
-                '{{nr}}',
-                '{{link}}',
+                '{{subdomain}}',
                 '{{days}}'
             ),
             array(
                 $entry['views'],
-                $nr . '.',
-                $entry['subdomain'] . '.drshit.ch',
+                $entry['subdomain'],
                 $entry['days']
             ),
             $template);
-
-        $lastScore = $entry['views'];
     }
     return str_replace('{{best}}', $output, file_get_contents('best.html'));
 });
@@ -75,29 +66,20 @@ $app->get('/fresh', function () use ($app, $database) {
     $statement->execute();
     $rows = $statement->fetchAll();
     $output = "";
-    $template = '<h2>{{nr}} <a href="http://{{link}}" target="_blank">{{link}}</a><br /><small>{{days}} days, {{views}} views</small></h2>';
-    $nr = 0;
-    $lastScore = null;
+    $template = '<h2><a href="http://{{subdomain}}.drshit.ch" target="_blank">{{subdomain}}</a><br /><small>{{days}} days, {{views}} views</small></h2>';
     foreach ($rows as $entry) {
-        if ($lastScore !== $entry['views']) {
-            $nr++;
-        }
         $output .= str_replace(
             array(
                 '{{views}}',
-                '{{nr}}',
-                '{{link}}',
+                '{{subdomain}}',
                 '{{days}}'
             ),
             array(
                 $entry['views'],
-                $nr . '.',
-                $entry['subdomain'] . '.drshit.ch',
+                $entry['subdomain'],
                 $entry['days']
             ),
             $template);
-
-        $lastScore = $entry['views'];
     }
     return str_replace('{{fresh}}', $output, file_get_contents('fresh.html'));
 });
@@ -108,18 +90,23 @@ $library = function () use ($app, $database) {
       return $response;
     }
     $ending = $app['request']->get('ending');
-    $statement = $database->prepare("select subdomain from redirects where subdomain like :ending order by subdomain");
-    $statement->execute(array(':ending' => "%" . $ending));
+    if ($ending) {
+      $ending = "%." . $ending;
+    } else {
+      $ending = "%";
+    }
+    $statement = $database->prepare("select subdomain from redirects where subdomain like :ending order by (views-(strftime('%s')/86400 - strftime('%s',created)/86400)*(strftime('%s')/86400 - strftime('%s',created)/86400)) desc");
+    $statement->execute(array(':ending' => $ending));
     $rows = $statement->fetchAll();
     $output = "";
-    $template = '<h2><a href="http://{{link}}" target="_blank">{{link}}</a></h2>';
+    $template = '<h2><a href="http://{{subdomain}}.drshit.ch" target="_blank">{{subdomain}}</a></h2>';
     foreach ($rows as $entry) {
         $output .= str_replace(
             array(
-                '{{link}}'
+                '{{subdomain}}'
             ),
             array(
-                $entry['subdomain'] . ".drshit.ch"
+                $entry['subdomain']
             ),
             $template);
     }
