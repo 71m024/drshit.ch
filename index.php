@@ -90,23 +90,30 @@ $library = function () use ($app, $database) {
       return $response;
     }
     $ending = $app['request']->get('ending');
+    $endingLength = 0;
     if ($ending) {
+      $endingLength = substr_count($ending, '.') + 1;
       $ending = "%." . $ending;
     } else {
       $ending = "%";
     }
-    $statement = $database->prepare("select subdomain from redirects where subdomain like :ending order by (views-(strftime('%s')/86400 - strftime('%s',created)/86400)*(strftime('%s')/86400 - strftime('%s',created)/86400))/(LENGTH(subdomain)-LENGTH(REPLACE(subdomain, '.', ''))+1) desc");
+    $statement = $database->prepare("SELECT subdomain FROM redirects WHERE subdomain LIKE :ending ORDER BY (views-(strftime('%s')/86400 - strftime('%s',created)/86400)*(strftime('%s')/86400 - strftime('%s',created)/86400)) DESC");
     $statement->execute(array(':ending' => $ending));
     $rows = $statement->fetchAll();
     $output = "";
     $template = '<h2><a href="http://{{subdomain}}.drshit.ch" target="_blank">{{subdomain}}</a></h2>';
     foreach ($rows as $entry) {
+        $subdomainArray = explode(".", $entry['subdomain']);
+        $subdomainDisplayLength = count($subdomainArray);
+        if ($ending != "%") {
+          $subdomainDisplayLength = ($endingLength) * -1;
+        }
         $output .= str_replace(
             array(
                 '{{subdomain}}'
             ),
             array(
-                $entry['subdomain']
+                implode(".", array_slice($subdomainArray, 0, $subdomainDisplayLength))
             ),
             $template);
     }
