@@ -116,7 +116,7 @@ $library = function () use ($app, $database) {
             ),
             array(
               $displaySubdomain,
-              $subdomain
+              $entry['subdomain']
             ),
             $template);
     }
