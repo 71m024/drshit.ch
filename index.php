@@ -101,19 +101,22 @@ $library = function () use ($app, $database) {
     $statement->execute(array(':ending' => $ending));
     $rows = $statement->fetchAll();
     $output = "";
-    $template = '<h2><a href="http://{{subdomain}}.drshit.ch" target="_blank">{{subdomain}}</a></h2>';
+    $template = '<h2><a href="http://{{subdomain}}.drshit.ch" target="_blank">{{displaySubdomain}}</a></h2>';
     foreach ($rows as $entry) {
         $subdomainArray = explode(".", $entry['subdomain']);
         $subdomainDisplayLength = count($subdomainArray);
         if ($ending != "%") {
           $subdomainDisplayLength = ($endingLength) * -1;
         }
+        $displaySubdomain = implode(".", array_slice($subdomainArray, 0, $subdomainDisplayLength));
         $output .= str_replace(
             array(
-                '{{subdomain}}'
+              '{{displaySubdomain}}',
+              '{{subdomain}}'
             ),
             array(
-                implode(".", array_slice($subdomainArray, 0, $subdomainDisplayLength))
+              $displaySubdomain,
+              $subdomain
             ),
             $template);
     }
