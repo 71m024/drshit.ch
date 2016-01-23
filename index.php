@@ -62,7 +62,7 @@ $app->get('/fresh', function () use ($app, $database) {
     if ($response) {
       return $response;
     }
-    $statement = $database->prepare("select url,subdomain,views,created,(strftime('%s')/86400 - strftime('%s',created)/86400) as days from redirects ORDER by (views-(strftime('%s')/86400 - strftime('%s',created)/86400)*(strftime('%s')/86400 - strftime('%s',created)/86400)) DESC LIMIT 10");
+    $statement = $database->prepare("select url,subdomain,views,created,(strftime('%s')/86400 - strftime('%s',created)/86400) as days from redirects ORDER by ((views-(strftime('%s')/86400 - strftime('%s',created)/86400)*(strftime('%s')/86400 - strftime('%s',created)/86400)))/(LENGTH(subdomain)-LENGTH(REPLACE(subdomain, '.', ''))+1) DESC LIMIT 10");
     $statement->execute();
     $rows = $statement->fetchAll();
     $output = "";
@@ -95,7 +95,7 @@ $library = function () use ($app, $database) {
     } else {
       $ending = "%";
     }
-    $statement = $database->prepare("select subdomain from redirects where subdomain like :ending order by (views-(strftime('%s')/86400 - strftime('%s',created)/86400)*(strftime('%s')/86400 - strftime('%s',created)/86400)) desc");
+    $statement = $database->prepare("select subdomain from redirects where subdomain like :ending order by (views-(strftime('%s')/86400 - strftime('%s',created)/86400)*(strftime('%s')/86400 - strftime('%s',created)/86400))/(LENGTH(subdomain)-LENGTH(REPLACE(subdomain, '.', ''))+1) desc");
     $statement->execute(array(':ending' => $ending));
     $rows = $statement->fetchAll();
     $output = "";
