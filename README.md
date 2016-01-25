@@ -7,4 +7,8 @@ This Project ist based on [Silex](http://silex.drshit.ch).
 
 ## Planed
 
-1. Fix favicon on lib pages
+1. Fix: missing favicon on lib pages
+
+2. Favicon for libs
+
+   Use favicon for lib pages from optional favicon link.
